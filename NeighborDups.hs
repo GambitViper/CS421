@@ -8,9 +8,8 @@ where
 -- exporting a function noNeighborDups, which returns a list
 -- with consecutive duplicates removed
 --
-matches :: Int -> [Int] -> [Int]
-matches val [] = []
-matches val (x : xs)
-  | val == x = x:(matches val xs)
-  | otherwise = matches val xs
---matches val = filter (val ==)
+noNeighborDups :: [Int] -> [Int]
+noNeighborDups [] = []
+noNeighborDups (x : xs)
+  | x == head xs = drop 1 xs
+  | otherwise = x : noNeighborDups xs
