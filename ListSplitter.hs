@@ -8,9 +8,10 @@ where
 -- exporting the function (splitListAt n xs), which splits
 -- a list into two lists, the first one with n elements.
 --
-matches :: Int -> [Int] -> [Int]
-matches val [] = []
-matches val (x : xs)
-  | val == x = x:(matches val xs)
-  | otherwise = matches val xs
---matches val = filter (val ==)
+splitListAt :: Int -> [Int] -> ([Int], [Int])
+splitListAt 0 xs = ([], xs)
+splitListAt _ [] = ([], [])
+splitListAt n (x:xs)
+  | n < 0 = ([], (x:xs))
+  | otherwise = ((x:y), z)
+  where (y, z) = splitListAt (n - 1) xs
