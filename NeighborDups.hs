@@ -10,6 +10,7 @@ where
 --
 noNeighborDups :: [Int] -> [Int]
 noNeighborDups [] = []
-noNeighborDups (x : xs)
-  | x == head xs = drop 1 xs
-  | otherwise = x : noNeighborDups xs
+noNeighborDups [x] = [x]
+noNeighborDups (x : y : xs)
+  | x == y = x : noNeighborDups xs 
+  | otherwise = x : y : noNeighborDups xs
