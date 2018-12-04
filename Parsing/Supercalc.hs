@@ -134,18 +134,24 @@ expr = factor `thn` \num1 ->
 
 --In Progress Area
 
-relationSuffix :: Parser Char (a -> a)
-relationSuffix = (lt `alt` gt `alt` lte `alt` gte `alt` eq `alt` neq) `thn` \op ->
-                 expr                                                 `thn` \val ->
-                 accept(\z -> op z val)
+-- relationSuffix :: Parser Char (a -> a)
+-- relationSuffix = (lt `alt` gt `alt` lte `alt` gte `alt` eq `alt` neq) `thn` \op ->
+--                  expr                                                 `thn` \val ->
+--                  accept(\z -> op z val)
 
-relation :: Parser Char a
-relation = expr `thn` \num1 ->
-           many relationSuffix `thn` \suffixes ->
-           accept (foldl (\n f -> f n) num1 suffixes)
+-- relation :: Parser Char a
+-- relation = expr `thn` \num1 ->
+--            many relationSuffix `thn` \suffixes ->
+--            accept (foldl (\n f -> f n) num1 suffixes)
 
--- relation :: Parser Char Bool
--- relation = expr `thn` \val1 ->
---            (lt `alt` gt `alt` lte `alt` gte `alt` eq `alt` neq) `thn` \op ->
---            expr `thn` \val2 ->
---            accept (op val1 val2)
+relation :: Parser Char Bool
+relation = expr `thn` \val1 ->
+           (lt `alt` gt `alt` lte `alt` gte `alt` eq `alt` neq) `thn` \op ->
+           expr `thn` \val2 ->
+           accept (op val1 val2)
+
+calc :: [Char] -> [Char]
+calc a = let b = bestParse exprBool a
+         in show b
+calc a = let c = bestParse expr a
+         in show c
