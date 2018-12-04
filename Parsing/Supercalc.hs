@@ -57,7 +57,7 @@ notSuffix = notop `thn` \op ->
             accept(op f)
 
 factorbool :: Parser Char Bool
-factorbool = booleval `alt` notSuffix
+factorbool = booleval `alt` notSuffix `alt` parenedbool
 
 -- Relational operators
 -- Binary operators <, >, <=, >=, == and !=, which receive integers and return a boolean value
@@ -71,12 +71,6 @@ eq  = literal '=' `thn`   \_ ->
       literal '=' `using` \_ -> (==)
 neq = literal '!' `thn`   \_ ->
       literal '=' `using` \_ -> (/=)
-
-relation :: Parser Char Bool
-relation = expr `thn` \val1 ->
-           (lt `alt` gt `alt` lte `alt` gte `alt` eq `alt` neq) `thn` \op ->
-           expr `thn` \val2 ->
-           accept (op val1 val2)
            
 parened :: Parser Char Int
 parened = literal '(' `thn` \_ ->
@@ -86,7 +80,7 @@ parened = literal '(' `thn` \_ ->
 
 parenedbool :: Parser Char Bool
 parenedbool = literal '(' `thn` \_ ->
-              exprbool    `thn` \res ->
+              exprBool    `thn` \res ->
               literal ')' `thn` \_ ->
               accept res
            
@@ -107,6 +101,26 @@ factor :: Parser Char Int
 factor = atomic `thn` \num1 ->
          many factorSuffix `thn` \suffixes ->
          accept (foldl (\n f -> f n) num1 suffixes)
+
+termSuffix :: Parser Char (Bool -> Bool)
+termSuffix = andop `thn`  \op ->
+             factorbool `thn` \val ->
+             accept (\z -> op z val)
+
+term :: Parser Char Bool
+term = factorbool `thn` \num1 ->
+       many termSuffix `thn` \suffixes ->
+       accept (foldl (\n f -> f n) num1 suffixes)
+
+exprBoolSuffix :: Parser Char (Bool -> Bool)
+exprBoolSuffix = orop `thn` \op ->
+                 term `thn` \val ->
+                 accept (\z -> op z val)
+
+exprBool :: Parser Char Bool
+exprBool = term `thn` \num1 ->
+           many exprBoolSuffix `thn` \suffixes ->
+           accept (foldl (\n f -> f n) num1 suffixes)
            
 exprSuffix :: Parser Char (Int -> Int)
 exprSuffix = (addition `alt` subtraction) `thn` \op ->
@@ -117,3 +131,9 @@ expr :: Parser Char Int
 expr = factor `thn` \num1 ->
        many exprSuffix `thn` \suffixes ->
        accept (foldl (\n f -> f n) num1 suffixes)
+
+relation :: Parser Char Bool
+relation = expr `thn` \val1 ->
+           (lt `alt` gt `alt` lte `alt` gte `alt` eq `alt` neq) `thn` \op ->
+           expr `thn` \val2 ->
+           accept (op val1 val2)
