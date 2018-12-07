@@ -60,8 +60,8 @@ class ArithParser extends Parser[String, Int] {
   def factor(str: String): Int = {
     var result: Int = 0
     var unaryMinus: Boolean = false
-    if(idx < str.length() && str.charAt(idx) == '-'){
-      unaryMinus = true
+    while(idx < str.length() && str.charAt(idx) == '-'){
+      unaryMinus = !unaryMinus
       idx += 1
     }
     if(Character.isDigit(str.charAt(idx))){
