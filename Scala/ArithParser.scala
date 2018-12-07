@@ -1,50 +1,50 @@
 class ArithParser {
   var idx: Int = 0
-  var str: String = null
   
-  def parseExpr(input: String): Int = {
+  def parseExpr(str: String): Int = {
     idx = 0
-    str = input
-    return expr()
+    return expr(str)
   }
-  def expr(): Int = {
-    var result: Int = term()
+  def expr(str: String): Int = {
+    var result: Int = term(str)
     while(idx < str.length() && (str.charAt(idx) == '+' || str.charAt(idx) == '-')){
       if(str.charAt(idx) == '+'){
         idx += 1
-        result = result + term()
+        result = result + term(str)
       }else if(str.charAt(idx) == '-'){
         idx += 1
-        result = result - term()
+        result = result - term(str)
       }else {
         //failure
       }
     }
     return result
   }
-  def term(): Int = {
-    var result: Int = factor()
+  def term(str: String): Int = {
+    var result: Int = factor(str)
     while(idx < str.length() && (str.charAt(idx) == '*' || str.charAt(idx) == '/')){
       if(str.charAt(idx) == '*'){
         idx += 1
-        result = result * factor()
+        result = result * factor(str)
       }else if(str.charAt(idx) == '/'){
         idx += 1
-        result = result / factor()
+        result = result / factor(str)
       }else{
         //failure
       }
     }
     return result
   }
-  def factor(): Int = {
+  def factor(str: String): Int = {
     var result: Int = 0
+    var unaryMinus: Boolean = false
+    if(idx < str.length() && str.charAt(idx) == '-') unaryMinus = true
     if(Character.isDigit(str.charAt(idx))){
-      var num: Int = number()
+      var num: Int = number(str)
       result = num
     }else if(str.charAt(idx) == '('){
       idx += 1
-      result = expr()
+      result = expr(str)
       if(str.charAt(idx) != ')'){
         //failure
       }
@@ -52,9 +52,9 @@ class ArithParser {
     }else{
       //failure
     }
-    return result
+    return if(unaryMinus) -1 * result else result
   }
-  def number(): Int = {
+  def number(str: String): Int = {
     var result: Int = 0
     while(idx < str.length() && Character.isDigit(str.charAt(idx))){
       result = 10 * result + str.charAt(idx).asDigit
