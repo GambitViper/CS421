@@ -40,11 +40,8 @@ class ArithParser {
   def factor(): Int = {
     var result: Int = 0
     if(Character.isDigit(str.charAt(idx))){
-      result = str.charAt(idx).asDigit
-      idx += 1
-    }else if(str.charAt(idx) == '-'){
-      idx += 1
-      result = -expr()
+      var num: Int = number()
+      result = num
     }else if(str.charAt(idx) == '('){
       idx += 1
       result = expr()
@@ -54,6 +51,14 @@ class ArithParser {
       idx += 1
     }else{
       //failure
+    }
+    return result
+  }
+  def number(): Int = {
+    var result: Int = 0
+    while(idx < str.length() && Character.isDigit(str.charAt(idx))){
+      result = 10 * result + str.charAt(idx).asDigit
+      idx += 1
     }
     return result
   }
