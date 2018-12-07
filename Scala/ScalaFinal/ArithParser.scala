@@ -28,36 +28,36 @@ class ArithParser extends Parser[String, Int] {
     return result
   }
   def expr(str: String): Int = {
-    var result: Int = term(str)
+    var result: Int = factor(str)
     while(idx < str.length() && (str.charAt(idx) == '+' || str.charAt(idx) == '-')){
       if(str.charAt(idx) == '+'){
         idx += 1
-        result = result + term(str)
+        result = result + factor(str)
       }else if(str.charAt(idx) == '-'){
         idx += 1
-        result = result - term(str)
+        result = result - factor(str)
       }else {
         throw new IllegalArgumentException("Malformed Input")
       }
     }
     return result
   }
-  def term(str: String): Int = {
-    var result: Int = factor(str)
+  def factor(str: String): Int = {
+    var result: Int = term(str)
     while(idx < str.length() && (str.charAt(idx) == '*' || str.charAt(idx) == '/')){
       if(str.charAt(idx) == '*'){
         idx += 1
-        result = result * factor(str)
+        result = result * term(str)
       }else if(str.charAt(idx) == '/'){
         idx += 1
-        result = result / factor(str)
+        result = result / term(str)
       }else{
         throw new IllegalArgumentException("Malformed Input")
       }
     }
     return result
   }
-  def factor(str: String): Int = {
+  def term(str: String): Int = {
     var result: Int = 0
     var unaryMinus: Boolean = false
     while(idx < str.length() && str.charAt(idx) == '-'){
